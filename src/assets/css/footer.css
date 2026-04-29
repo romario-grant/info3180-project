@@ -43,7 +43,7 @@
 
   .footer-cnt .top .company-info a img {
     width: 100%;
-    filter: brightness(100);
+    transition: filter 0.2s;
   }
 
   .footer-cnt .top .company-info p {
@@ -89,5 +89,9 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+  }
+
+  .footer-cnt .top .company-info a img:hover {
+    filter: brightness(0);
   }
 }

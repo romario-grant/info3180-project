@@ -1,13 +1,14 @@
-
 .authentication {
   display: grid;
   grid-template-columns: 1fr;
+  height: 100vh;
 }
 
 .company {
-  display: flex;
+  display: none;
   align-items: center;
   text-align: center;
+  background-color: white;
 }
 
 .company .wrapper {
@@ -16,109 +17,90 @@
   gap: 1.6rem;
   color: white;
   padding-block: 2.4rem;
+  padding-inline: 3.2rem;
   max-width: 800px;
 }
 
 .company .wrapper .lockup h1 {
   color: var(--primary-color);
+
 }
 
 .company .wrapper .lockup p {
   font-size: clamp(var(--fs-0), 3vw, var(--fs-1));
-    color: var(--secondary-color);
+  color: var(--secondary-color);
 }
 
-.form {
-  background-color: white;
-  background-image: url("../bg/red.jpg");
-  background-size: cover;
-  background-repeat: none;
-  background-position: center;
+.company .wrapper .lockup img {
+  transition: 0.2s;
 }
 
-.form .wrapper {
-  max-width: 500px;
+.company .wrapper .lockup img:hover {
+  filter: brightness(0);
 }
 
-.form .box {
-  padding: 1.6rem;
+form {
+  background-color: var(--dark);
+  display: flex;
+  align-items: center;
+}
+
+form .wrapper {
+  padding: 0rem;
+  display: flex;
+  justify-content: center;
+  width: clamp(350px, 70%, 500px);
+}
+
+form .box {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
+  position: relative;
   background: rgba(129, 127, 127, 0.2);
   border-radius: 1.4rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 100%;
 }
 
-.form .box h2 {
+form h2 {
   display: flex;
   color: white;
-  font-size: clamp(var(--fs-2), 10vw, var(--fs-5));
-}
-
-.form .box .group {
-  display: flex;
-  flex-direction: row;
   justify-content: center;
-  list-style-type: none;
-  gap: 2.4rem;
+  width: 100%;
+  font-size: var(--fs-6);
+  padding-bottom: 1.6rem;
 }
 
-.form .box .group li a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 100px;
-  position: relative;
-  color: white;
-  cursor: pointer;
-  transition: transform var(--bg-transition);
-}
-
-.form .box .group li a::before {
-  content: "";
-  background-color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 100px;
-  position: absolute;
-  z-index: -1;
-}
-
-.form .box .group li a img {
-  width: 90%;
-}
-
-.form .box .inputs {
+form .box .inputs {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  padding-bottom: 0.8rem;
 }
 
-.form .box .inputs p {
+form .box .inputs p {
   width: max-content;
   color: white;
   opacity: 0.85;
   font-size: clamp(var(--fs-0), 3vw, var(--fs-1));
 }
 
-.form .box .field label {
+form .box .field label {
   opacity: 0.9;
 }
 
-.form .box .field {
+form .box .field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
   color: white;
 }
 
-.form .box .password a {
+form .box .password a {
   width: max-content;
   text-decoration: underline;
   font-size: clamp(var(--fs-0), 3vw, var(--fs-1));
@@ -129,21 +111,54 @@
   transition: filter var(--bg-transition);
 }
 
-.form .box .field label {
+form .box .field label {
   width: max-content;
   font-size: clamp(var(--fs-0), 3vw, var(--fs-1));
 }
 
-.form .box .field input {
+form .box .field input {
   border-radius: 5px;
   padding: 0.2rem 0.8rem;
+  transition: 0.3s;
 }
 
-.form .box.buttons {
+form .box .field input:focus {
+  transform: translateY(-3px);
+  box-shadow: 0px 6px 6px rgb(0, 0, 0, 0.4);
+}
+
+.error {
+  position: absolute;
+  top: -12%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  background-color: red;
+  color: white;
+  padding: var(--button-padding);
+  margin-bottom: 0.8rem;
+  border-radius: 100px;
+
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translateY(-100px);
+  transition: all 0.4s;
+}
+
+.error.active {
+  transform: translateY(0px);
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+form .box .buttons {
+  padding-bottom: 0.8rem;
   justify-content: center;
 }
 
-.form .box .cta {
+form .box .cta {
   width: 96%;
 }
 
@@ -153,7 +168,7 @@
 }
 
 .account {
-  color: white;
+  color: var(--secondary-color);
   text-decoration: underline;
   font-weight: 600;
   transition: filter var(--bg-transition);
@@ -164,6 +179,10 @@
   .authentication {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .company {
+    display: flex;
   }
 
   .company .wrapper {
@@ -177,7 +196,7 @@
 }
 
 @media (width > 1028px) {
-  .form .box .group li a:hover {
+  form .box .group li a:hover {
     transform: translateY(-5px);
   }
 
@@ -185,16 +204,16 @@
     filter: brightness(0);
   }
 
-  .form .box .password a:hover {
+  form .box .password a:hover {
     filter: brightness(0);
   }
 }
 
-.form .box .group li a:active {
+form .box .group li a:active {
   transform: translateY(5px);
 }
 
-.form .box .password a:active {
+form .box .password a:active {
   filter: brightness(0);
 }
 

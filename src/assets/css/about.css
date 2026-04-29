@@ -1,0 +1,50 @@
+@layer default {
+  .section-about {
+    background-color: white;
+  }
+
+  .about {
+    display: grid;
+    gap: 3.2rem;
+    grid-template-columns: 1fr;
+    align-items: center;
+    position: relative;
+  }
+
+  .about .lockup h1 {
+    color: var(--primary-color);
+  }
+
+  .about .lockup p {
+    text-align: left;
+  }
+
+  .about .img-box {
+    display: none;
+  }
+}
+
+@media (width > 1024px) {
+  .about {
+    display: grid;
+    gap: 3.2rem;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+
+  .about .img-box {
+    display: flex;
+  }
+
+  .about .img-box img {
+    width: 60%;
+  }
+
+  .about .lockup h1 {
+    text-align: left;
+  }
+
+  .about .lockup .buttons {
+    flex-direction: row;
+  }
+}
