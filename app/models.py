@@ -131,3 +131,27 @@ class Notification(db.Model):
     is_read = db.Column(db.Boolean, default=False, index=True)
     related_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+class Block(db.Model):
+    __tablename__ = "blocks"
+
+    id = db.Column(db.Integer, primary_key=True)
+    blocker_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    blocked_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    __table_args__ = (
+        db.UniqueConstraint("blocker_id", "blocked_user_id", name="uq_block_pair"),
+    )
+
+
+class Report(db.Model):
+    __tablename__ = "reports"
+
+    id = db.Column(db.Integer, primary_key=True)
+    reporter_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    reported_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    reason = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(30), default="pending", index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)

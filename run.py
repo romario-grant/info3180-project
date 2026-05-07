@@ -11,6 +11,8 @@ from app.models import (
     Interest,
     Favorite,
     Notification,
+    Block,
+    Report
 )
 import os
 import uuid
@@ -409,7 +411,6 @@ def update_profile_interests():
         "interests": [serialize_interest(interest) for interest in profile.interests]
     }), 200
 
-
 @app.route("/profiles", methods=["GET"])
 def get_profiles():
     user_id = session.get("user_id")
@@ -424,7 +425,18 @@ def get_profiles():
         Like.from_user_id == user_id
     )
 
+    blocked_user_ids = db.session.query(Block.blocked_user_id).filter(
+        Block.blocker_id == user_id
+    )
+
+    blocked_me_ids = db.session.query(Block.blocker_id).filter(
+        Block.blocked_user_id == user_id
+    )
+
     query = Profile.query.filter(Profile.visibility == "public")
+
+    query = query.filter(~Profile.user_id.in_(blocked_user_ids))
+    query = query.filter(~Profile.user_id.in_(blocked_me_ids))
 
     if not include_self:
         query = query.filter(Profile.user_id != user_id)
@@ -486,7 +498,9 @@ def get_profiles():
         score = calculate_match_score(current_profile, profile)
         profile_interest_names = [item.name for item in profile.interests]
         shared_interest_count = len(
-            current_interest_names.intersection({item.name.lower() for item in profile.interests})
+            current_interest_names.intersection(
+                {item.name.lower() for item in profile.interests}
+            )
         )
 
         results.append({
@@ -506,7 +520,9 @@ def get_profiles():
             "match_score": score,
             "interests": profile_interest_names,
             "shared_interest_count": shared_interest_count,
-            "created_at": profile.user.created_at.isoformat() if profile.user and profile.user.created_at else None
+            "created_at": profile.user.created_at.isoformat()
+            if profile.user and profile.user.created_at
+            else None
         })
 
     if sort == "newest":
@@ -516,17 +532,22 @@ def get_profiles():
         )
     elif sort == "age_asc":
         results.sort(
-            key=lambda item: (item["age"] is None, item["age"] if item["age"] is not None else 999)
+            key=lambda item: (
+                item["age"] is None,
+                item["age"] if item["age"] is not None else 999
+            )
         )
     elif sort == "age_desc":
         results.sort(
-            key=lambda item: (item["age"] is None, -(item["age"] if item["age"] is not None else 0))
+            key=lambda item: (
+                item["age"] is None,
+                -(item["age"] if item["age"] is not None else 0)
+            )
         )
     else:
         results.sort(key=lambda item: item["match_score"], reverse=True)
 
     return jsonify(results), 200
-
 
 @app.route("/like/<int:target_user_id>", methods=["POST"])
 def like_user(target_user_id):
@@ -899,20 +920,31 @@ def delete_photo(photo_id):
 def set_primary(photo_id):
     user_id = session.get("user_id")
 
-    photos = ProfilePhoto.query.filter_by(user_id=user_id).all()
-
-    for p in photos:
-        p.is_primary = False
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
 
     photo = ProfilePhoto.query.get(photo_id)
 
     if not photo or photo.user_id != user_id:
         return jsonify({"error": "Not found"}), 404
 
+    photos = ProfilePhoto.query.filter_by(user_id=user_id).all()
+
+    for p in photos:
+        p.is_primary = False
+
     photo.is_primary = True
+
+    profile = Profile.query.filter_by(user_id=user_id).first()
+    if profile:
+        profile.profile_picture = photo.image_url
+
     db.session.commit()
 
-    return jsonify({"message": "Primary photo updated"}), 200
+    return jsonify({
+        "message": "Primary photo updated",
+        "profile_picture": photo.image_url
+    }), 200
 
 
 @app.route("/favorites", methods=["POST"])
@@ -1049,10 +1081,133 @@ def mark_notification_read(notification_id):
     return jsonify({"message": "Notification marked as read."}), 200
 
 
+@app.route("/blocks", methods=["POST"])
+def block_user():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Not logged in."}), 401
+
+    data = request.get_json()
+    blocked_user_id = data.get("blocked_user_id")
+
+    if not blocked_user_id:
+        return jsonify({"error": "blocked_user_id is required."}), 400
+
+    blocked_user_id = int(blocked_user_id)
+
+    if blocked_user_id == user_id:
+        return jsonify({"error": "You cannot block yourself."}), 400
+
+    existing_block = Block.query.filter_by(
+        blocker_id=user_id,
+        blocked_user_id=blocked_user_id
+    ).first()
+
+    if existing_block:
+        return jsonify({"message": "User already blocked."}), 200
+
+    block = Block(
+        blocker_id=user_id,
+        blocked_user_id=blocked_user_id
+    )
+
+    db.session.add(block)
+    db.session.commit()
+
+    return jsonify({"message": "User blocked successfully."}), 201
+
+@app.route("/blocks/<int:blocked_user_id>", methods=["DELETE"])
+def unblock_user(blocked_user_id):
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Not logged in."}), 401
+
+    block = Block.query.filter_by(
+        blocker_id=user_id,
+        blocked_user_id=blocked_user_id
+    ).first()
+
+    if not block:
+        return jsonify({"error": "Block not found."}), 404
+
+    db.session.delete(block)
+    db.session.commit()
+
+    return jsonify({"message": "User unblocked successfully."}), 200
+
+@app.route("/reports", methods=["POST"])
+def report_user():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Not logged in."}), 401
+
+    data = request.get_json()
+
+    reported_user_id = data.get("reported_user_id")
+    reason = (data.get("reason") or "").strip()
+    details = (data.get("details") or "").strip()
+
+    if not reported_user_id or not reason:
+        return jsonify({"error": "reported_user_id and reason are required."}), 400
+
+    reported_user_id = int(reported_user_id)
+
+    if reported_user_id == user_id:
+        return jsonify({"error": "You cannot report yourself."}), 400
+
+    report = Report(
+        reporter_id=user_id,
+        reported_user_id=reported_user_id,
+        reason=reason,
+        details=details
+    )
+
+    db.session.add(report)
+    db.session.commit()
+
+    return jsonify({"message": "Report submitted successfully."}), 201
+
+
+@app.route("/analytics/summary", methods=["GET"])
+def analytics_summary():
+    return jsonify({
+        "total_users": User.query.count(),
+        "total_profiles": Profile.query.count(),
+        "total_likes": Like.query.filter_by(status="like").count(),
+        "total_passes": Like.query.filter_by(status="pass").count(),
+        "total_matches": Match.query.count(),
+        "total_messages": Message.query.count(),
+        "total_reports": Report.query.count(),
+        "total_blocks": Block.query.count(),
+        "total_favorites": Favorite.query.count()
+    }), 200
+
+
+@app.route("/analytics/top-interests", methods=["GET"])
+def analytics_top_interests():
+    interests = Interest.query.all()
+
+    results = []
+
+    for interest in interests:
+        results.append({
+            "interest": interest.name,
+            "profile_count": interest.profiles.count()
+        })
+
+    results.sort(key=lambda item: item["profile_count"], reverse=True)
+
+    return jsonify(results[:10]), 200
+
+
 @app.route("/logout", methods=["POST"])
 def logout():
     session.clear()
     return jsonify({"message": "Logged out successfully."}), 200
+
 
 
 if __name__ == "__main__":

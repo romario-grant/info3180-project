@@ -35,8 +35,9 @@ const loading = ref(false);
 const dragActive = ref(false);
 
 const imageUrl = (path) => {
-  if (!path)
+  if (!path) {
     return new URL("../assets/pics/default.webp", import.meta.url).href;
+  }
   return `http://localhost:5000${path}`;
 };
 
@@ -60,13 +61,21 @@ const loadProfile = async () => {
     photos.value = photosData;
     allInterests.value = interestsData.map((item) => item.name);
     selectedInterests.value = (profileData.interests || []).map(
-      (item) => item.name,
+      (item) => item.name
     );
   } catch (error) {
     errorMessage.value = error.message;
   } finally {
     loading.value = false;
   }
+};
+
+const reloadProfileOnly = async () => {
+  const updatedProfile = await getProfile();
+  profile.value = updatedProfile;
+  selectedInterests.value = (updatedProfile.interests || []).map(
+    (item) => item.name
+  );
 };
 
 const handleSave = async () => {
@@ -105,8 +114,9 @@ const handleSave = async () => {
     const result = await updateProfile(payload);
     profile.value = result.profile;
     selectedInterests.value = (result.profile.interests || []).map(
-      (item) => item.name,
+      (item) => item.name
     );
+
     message.value = "Profile updated successfully.";
   } catch (error) {
     errorMessage.value = error.message;
@@ -120,6 +130,7 @@ const refreshPhotos = async () => {
 const handleFileSelect = async (event) => {
   const files = Array.from(event.target.files || []);
   if (!files.length) return;
+
   await handlePhotoUpload(files);
   event.target.value = "";
 };
@@ -131,6 +142,8 @@ const handlePhotoUpload = async (files) => {
   try {
     await uploadPhotos(files);
     await refreshPhotos();
+    await reloadProfileOnly();
+
     message.value = "Photos uploaded successfully.";
   } catch (error) {
     errorMessage.value = error.message;
@@ -139,8 +152,10 @@ const handlePhotoUpload = async (files) => {
 
 const handleDrop = async (event) => {
   dragActive.value = false;
+
   const files = Array.from(event.dataTransfer.files || []);
   if (!files.length) return;
+
   await handlePhotoUpload(files);
 };
 
@@ -151,6 +166,8 @@ const handleDeletePhoto = async (photoId) => {
   try {
     await deletePhoto(photoId);
     await refreshPhotos();
+    await reloadProfileOnly();
+
     message.value = "Photo deleted successfully.";
   } catch (error) {
     errorMessage.value = error.message;
@@ -164,6 +181,8 @@ const handleSetPrimary = async (photoId) => {
   try {
     await setPrimaryPhoto(photoId);
     await refreshPhotos();
+    await reloadProfileOnly();
+
     message.value = "Primary photo updated.";
   } catch (error) {
     errorMessage.value = error.message;
@@ -175,7 +194,7 @@ const toggleInterest = (interestName) => {
 
   if (selectedInterests.value.includes(normalized)) {
     selectedInterests.value = selectedInterests.value.filter(
-      (item) => item !== normalized,
+      (item) => item !== normalized
     );
   } else {
     selectedInterests.value.push(normalized);
@@ -206,19 +225,18 @@ onMounted(() => {
 <template>
   <aside class="sidebar">
     <nav>
-      <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+      <RouterLink to="/dashboard"><p>Browse</p></RouterLink>
       <RouterLink to="/matches"><p>Matches</p></RouterLink>
       <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
       <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
-      <RouterLink to="/" class="btm"
-        ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
-      >
+      <RouterLink to="/" class="btm">
+        <i class="fa-solid fa-right-from-bracket"></i> Log out
+      </RouterLink>
     </nav>
   </aside>
 
   <main class="dashboard pfp">
     <div class="dash">
-
       <div class="top">
         <img
           class="avatar-image"
@@ -233,8 +251,6 @@ onMounted(() => {
       <p v-if="loading">Loading...</p>
 
       <div v-if="!loading" class="profile-panel">
-
-        <!-- Upload -->
         <div
           class="upload-zone"
           :class="{ active: dragActive }"
@@ -249,24 +265,25 @@ onMounted(() => {
           </label>
         </div>
 
-        <!-- Gallery -->
         <div class="gallery-grid">
           <div class="gallery-item" v-for="photo in photos" :key="photo.id">
-            <img :src="imageUrl(photo.image_url)" />
+            <img :src="imageUrl(photo.image_url)" alt="uploaded photo" />
             <p v-if="photo.is_primary" class="primary-tag">Primary</p>
 
             <div class="action-buttons">
               <button class="btn-small" @click="handleSetPrimary(photo.id)">
                 Primary
               </button>
-              <button class="btn-small delete-btn" @click="handleDeletePhoto(photo.id)">
+              <button
+                class="btn-small delete-btn"
+                @click="handleDeletePhoto(photo.id)"
+              >
                 Delete
               </button>
             </div>
           </div>
         </div>
 
-        <!-- FORM GRID -->
         <div class="form-grid">
           <input v-model="profile.display_name" placeholder="Display name" />
           <input v-model="profile.age" type="number" placeholder="Age" />
@@ -281,15 +298,29 @@ onMounted(() => {
             <option value="private">Private</option>
           </select>
 
-          <input style="display: none" v-model="profile.min_preferred_age" type="number" placeholder="Min age" />
-          <input style="display: none" v-model="profile.max_preferred_age" type="number" placeholder="Max age" />
+          <input
+            style="display: none"
+            v-model="profile.min_preferred_age"
+            type="number"
+            placeholder="Min age"
+          />
+          <input
+            style="display: none"
+            v-model="profile.max_preferred_age"
+            type="number"
+            placeholder="Max age"
+          />
 
-          <input style="display: none" v-model="profile.preferred_radius_km" type="number" placeholder="Radius (km)" />
+          <input
+            style="display: none"
+            v-model="profile.preferred_radius_km"
+            type="number"
+            placeholder="Radius (km)"
+          />
         </div>
 
         <textarea v-model="profile.bio" placeholder="Bio"></textarea>
 
-        <!-- Interests -->
         <div class="interests-box">
           <h3>Interests</h3>
 
@@ -316,7 +347,6 @@ onMounted(() => {
         <button class="cta reset-button save-button" @click="handleSave">
           Save Profile
         </button>
-
       </div>
     </div>
   </main>

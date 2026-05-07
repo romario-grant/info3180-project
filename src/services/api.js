@@ -223,3 +223,18 @@ export async function markNotificationRead(notificationId) {
     method: "PUT",
   });
 }
+
+export async function blockUser(blockedUserId) {
+  return apiRequest("/blocks", {
+    method: "POST",
+    body: JSON.stringify({
+      blocked_user_id: blockedUserId,
+    }),
+  });
+}
+
+export async function unblockUser(blockedUserId) {
+  return apiRequest(`/blocks/${blockedUserId}`, {
+    method: "DELETE",
+  });
+}

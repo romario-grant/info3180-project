@@ -6,9 +6,11 @@ import {
   passUser,
   getSingleProfile,
   addFavorite,
+  getProfile,
 } from "../services/api";
 
 const profiles = ref([]);
+const currentProfile = ref(null);
 const errorMessage = ref("");
 const loading = ref(false);
 
@@ -32,9 +34,18 @@ const formatName = (name) => {
 };
 
 const imageUrl = (path) => {
-  if (!path)
+  if (!path) {
     return new URL("../assets/pics/default.webp", import.meta.url).href;
+  }
   return `http://localhost:5000${path}`;
+};
+
+const loadCurrentProfile = async () => {
+  try {
+    currentProfile.value = await getProfile();
+  } catch (error) {
+    console.error("Could not load current profile:", error);
+  }
 };
 
 const loadProfiles = async () => {
@@ -65,7 +76,7 @@ const handleLike = async (userId) => {
   try {
     const result = await likeUser(userId);
     profiles.value = profiles.value.filter(
-      (profile) => profile.user_id !== userId,
+      (profile) => profile.user_id !== userId
     );
 
     if (result.match_created) {
@@ -80,7 +91,7 @@ const handlePass = async (userId) => {
   try {
     await passUser(userId);
     profiles.value = profiles.value.filter(
-      (profile) => profile.user_id !== userId,
+      (profile) => profile.user_id !== userId
     );
   } catch (error) {
     errorMessage.value = error.message;
@@ -113,8 +124,9 @@ const closeProfileModal = () => {
   selectedProfile.value = null;
 };
 
-onMounted(() => {
-  loadProfiles();
+onMounted(async () => {
+  await loadCurrentProfile();
+  await loadProfiles();
 });
 </script>
 
@@ -124,23 +136,26 @@ onMounted(() => {
       <RouterLink to="/me/profile" class="pfp">
         <img
           class="profile-image"
-          src="../assets/pics/default.webp"
+          :src="imageUrl(currentProfile?.profile_picture)"
           alt="profile picture"
         />
       </RouterLink>
-      <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+
+      <RouterLink to="/dashboard"><p>Browse</p></RouterLink>
       <RouterLink to="/matches"><p>Matches</p></RouterLink>
       <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
       <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
-      <RouterLink to="/" class="btm"
-        ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
-      >
+      <RouterLink to="/" class="btm">
+        <i class="fa-solid fa-right-from-bracket"></i> Log out
+      </RouterLink>
     </nav>
   </aside>
+
   <main class="dashboard">
     <div class="dash">
       <div class="container">
         <h2>Browse Potential Matches</h2>
+
         <div class="filters">
           <input
             v-model="filters.search"
@@ -170,6 +185,7 @@ onMounted(() => {
             placeholder="Interest..."
           />
         </div>
+
         <div class="fil">
           <button class="cta" @click="loadProfiles" type="button">
             Apply Filters
@@ -183,7 +199,11 @@ onMounted(() => {
             Reset Filters
           </button>
         </div>
+
+        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+        <p v-if="loading" class="loading-text">Loading profiles...</p>
       </div>
+
       <section class="section-team">
         <div class="team">
           <article
@@ -201,6 +221,7 @@ onMounted(() => {
                 class="profile-card__img"
               />
             </figure>
+
             <div class="profile-card__body">
               <div
                 class="profile-card__info clickable"
@@ -210,45 +231,57 @@ onMounted(() => {
                   {{ formatName(profile.display_name) }}
                   <span v-if="profile.age">, {{ profile.age }}</span>
                 </h3>
+
                 <p v-if="profile.location" class="text-muted">
                   {{ profile.location }}
                 </p>
-                <p v-if="profile.bio" class="text-muted">{{ profile.bio }}</p>
+
+                <p v-if="profile.bio" class="text-muted">
+                  {{ profile.bio }}
+                </p>
               </div>
-              <!-- SIGNALS -->
+
               <div class="profile-card__signals">
                 <p class="match-score">🔥 {{ profile.match_score }}% Match</p>
+
                 <p
                   v-if="profile.shared_interest_count > 0"
                   class="text-highlight"
                 >
                   💙 {{ profile.shared_interest_count }} shared interests
                 </p>
+
                 <p v-if="profile.interests?.length" class="text-muted small">
                   {{ profile.interests.join(", ") }}
                 </p>
+
                 <p v-if="profile.looking_for" class="text-muted small">
                   Looking for: {{ profile.looking_for }}
                 </p>
               </div>
-              <!-- ACTIONS -->
+
               <div class="profile-card__actions">
                 <div class="tp">
                   <button
                     class="reset-button cta btn--favorite"
+                    type="button"
                     @click="handleFavorite(profile.user_id)"
                   >
                     Favorite
                   </button>
+
                   <button
                     class="reset-button cta btn--like"
+                    type="button"
                     @click="handleLike(profile.user_id)"
                   >
                     Like
                   </button>
                 </div>
+
                 <button
                   class="reset-button cta btn--pass"
+                  type="button"
                   @click="handlePass(profile.user_id)"
                 >
                   Pass
@@ -256,14 +289,14 @@ onMounted(() => {
               </div>
             </div>
           </article>
+
           <p v-if="!loading && profiles.length === 0" class="empty-text">
             No profiles found.
           </p>
         </div>
       </section>
-        </div>
+    </div>
   </main>
 </template>
 
 <style scoped src="../assets/css/dashboard.css"></style>
-/style>
