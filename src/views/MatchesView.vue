@@ -36,7 +36,6 @@ onMounted(() => {
 
 <template>
   <main class="dashboard">
-
     <div class="dash">
       <h2>Your Matches</h2>
 
@@ -71,9 +70,13 @@ onMounted(() => {
                   </p>
                 </div>
 
-                <RouterLink :to="`/message/${match.user_id}`" class="cta">
-                  Message
-                </RouterLink>
+                <div class="btns">
+                  <RouterLink :to="`/message/${match.user_id}`" class="cta">
+                    Message
+                  </RouterLink>
+                  <button class="cta reset-btn" data-cta-style="outline">Block</button>
+                  <button class="cta reset-btn" data-cta-style="line">Report</button>
+                </div>
               </div>
             </div>
 
@@ -89,4 +92,3 @@ onMounted(() => {
 
 <style scoped src="../assets/css/dashboard.css"></style>
 <style scoped src="../assets/css/matches.css"></style>
-

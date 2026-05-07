@@ -116,45 +116,15 @@ onBeforeUnmount(() => {
 
 <template>
   <main class="dashboard">
-    <aside class="sidebar">
-      <nav>
-        <RouterLink to="/me/profile" class="pfp">
-          <img
-            class="profile-image"
-            src="../assets/pics/default.webp"
-            alt="profile picture"
-          />
-        </RouterLink>
-        <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
-        <RouterLink to="/matches"><p>Matches</p></RouterLink>
-        <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
-        <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
-        <RouterLink to="/" class="btm"
-          ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
-        >
-      </nav>
-    </aside>
-
     <div class="dash">
-      <RouterLink to="/matches" class="back-btn">← Back to Matches</RouterLink>
+      <RouterLink to="/matches" class="cta" data-cta-style="line"
+        >← Back to Matches</RouterLink
+      >
 
       <div class="message-layout">
-        <aside class="conversation-list">
-          <h3>Conversations</h3>
 
-          <RouterLink
-            v-for="match in matches"
-            :key="match.match_id"
-            :to="`/message/${match.user_id}`"
-            class="conversation-item"
-            :class="{ active: Number(props.userId) === match.user_id }"
-          >
-            {{ formatName(match.display_name) }}
-          </RouterLink>
-        </aside>
 
         <section class="chat-panel">
-
           <p v-if="errorMessage" class="error-text">
             {{ errorMessage }}
           </p>
@@ -204,8 +174,8 @@ onBeforeUnmount(() => {
                 type="text"
                 placeholder="Type your message..."
               />
-              <button class="cta reset-btn mess" type="submit">Send</button>
-            </form>
+              <button class="cta reset-btn" type="submit">Send</button>
+             
           </section>
         </section>
       </div>
