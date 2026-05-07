@@ -204,143 +204,119 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="profile-page">
-    <aside class="sidebar">
-      <nav>
-        <RouterLink to="/dashboard">Browse</RouterLink>
-        <RouterLink to="/me/profile">My Profile</RouterLink>
-        <RouterLink to="/matches">Matches</RouterLink>
-      </nav>
-    </aside>
+  <aside class="sidebar">
+    <nav>
+      <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+      <RouterLink to="/matches"><p>Matches</p></RouterLink>
+      <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
+      <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
+      <RouterLink to="/" class="btm"
+        ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
+      >
+    </nav>
+  </aside>
 
-    <div class="content">
-      <h2>My Profile</h2>
+  <main class="dashboard pfp">
+    <div class="dash">
+
+      <div class="top">
+        <img
+          class="avatar-image"
+          :src="imageUrl(profile.profile_picture)"
+          alt="profile"
+        />
+        <h2>My Profile</h2>
+      </div>
 
       <p v-if="message" class="success">{{ message }}</p>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <p v-if="loading">Loading profile...</p>
+      <p v-if="loading">Loading...</p>
 
-      <div v-if="!loading" class="profile-card">
-        <img
-          class="profile-image"
-          :src="imageUrl(profile.profile_picture)"
-          alt="profile picture"
-        />
+      <div v-if="!loading" class="profile-panel">
 
+        <!-- Upload -->
         <div
-          class="drop-zone"
+          class="upload-zone"
           :class="{ active: dragActive }"
           @dragover.prevent="dragActive = true"
           @dragleave.prevent="dragActive = false"
           @drop.prevent="handleDrop"
         >
-          <p>Drag and drop photos here</p>
-          <p>or</p>
-          <label for="photoUpload" class="upload-btn">Choose Photos</label>
-          <input
-            id="photoUpload"
-            type="file"
-            accept=".png,.jpg,.jpeg,.webp"
-            multiple
-            @change="handleFileSelect"
-            hidden
-          />
+          <p>Drag & drop photos</p>
+          <label class="cta upload-button">
+            Choose Photos
+            <input type="file" multiple hidden @change="handleFileSelect" />
+          </label>
         </div>
 
-        <div class="photo-gallery">
-          <div class="photo-card" v-for="photo in photos" :key="photo.id">
-            <img :src="imageUrl(photo.image_url)" alt="uploaded photo" />
-            <p v-if="photo.is_primary" class="primary-badge">Primary</p>
+        <!-- Gallery -->
+        <div class="gallery-grid">
+          <div class="gallery-item" v-for="photo in photos" :key="photo.id">
+            <img :src="imageUrl(photo.image_url)" />
+            <p v-if="photo.is_primary" class="primary-tag">Primary</p>
 
-            <div class="photo-actions">
-              <button
-                type="button"
-                class="small-btn"
-                @click="handleSetPrimary(photo.id)"
-              >
-                Set Primary
+            <div class="action-buttons">
+              <button class="btn-small" @click="handleSetPrimary(photo.id)">
+                Primary
               </button>
-              <button
-                type="button"
-                class="small-btn delete"
-                @click="handleDeletePhoto(photo.id)"
-              >
+              <button class="btn-small delete-btn" @click="handleDeletePhoto(photo.id)">
                 Delete
               </button>
             </div>
           </div>
         </div>
 
-        <input
-          v-model="profile.display_name"
-          type="text"
-          placeholder="Display name"
-        />
-        <input v-model="profile.age" type="number" placeholder="Age" />
+        <!-- FORM GRID -->
+        <div class="form-grid">
+          <input v-model="profile.display_name" placeholder="Display name" />
+          <input v-model="profile.age" type="number" placeholder="Age" />
+
+          <input v-model="profile.location" placeholder="Location" />
+          <input v-model="profile.gender" placeholder="Gender" />
+
+          <input v-model="profile.looking_for" placeholder="Looking for" />
+
+          <select v-model="profile.visibility">
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+
+          <input style="display: none" v-model="profile.min_preferred_age" type="number" placeholder="Min age" />
+          <input style="display: none" v-model="profile.max_preferred_age" type="number" placeholder="Max age" />
+
+          <input style="display: none" v-model="profile.preferred_radius_km" type="number" placeholder="Radius (km)" />
+        </div>
+
         <textarea v-model="profile.bio" placeholder="Bio"></textarea>
-        <input v-model="profile.location" type="text" placeholder="Location" />
-        <input v-model="profile.gender" type="text" placeholder="Gender" />
-        <input
-          v-model="profile.looking_for"
-          type="text"
-          placeholder="Looking for"
-        />
 
-        <select v-model="profile.visibility">
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
+        <!-- Interests -->
+        <div class="interests-box">
+          <h3>Interests</h3>
 
-        <input
-          v-model="profile.min_preferred_age"
-          type="number"
-          placeholder="Minimum preferred age"
-        />
-        <input
-          v-model="profile.max_preferred_age"
-          type="number"
-          placeholder="Maximum preferred age"
-        />
-        <input
-          v-model="profile.preferred_radius_km"
-          type="number"
-          placeholder="Preferred radius (km)"
-        />
-
-        <div class="interests-section">
-          <h3>Choose Your Interests</h3>
-          <p class="interest-note">Select at least 3 interests.</p>
-
-          <div class="interest-list">
+          <div class="interests-grid">
             <button
-              v-for="interest in allInterests"
-              :key="interest"
-              type="button"
-              class="interest-chip"
-              :class="{ selected: selectedInterests.includes(interest) }"
-              @click="toggleInterest(interest)"
+              v-for="i in allInterests"
+              :key="i"
+              class="interest-pill"
+              :class="{ selected: selectedInterests.includes(i) }"
+              @click="toggleInterest(i)"
             >
-              {{ formatInterestName(interest) }}
+              {{ formatInterestName(i) }}
             </button>
           </div>
 
-          <div class="custom-interest-row">
-            <input
-              v-model="newInterest"
-              type="text"
-              placeholder="Add custom interest"
-            />
-            <button type="button" class="small-btn" @click="addCustomInterest">
+          <div class="interest">
+            <input v-model="newInterest" placeholder="Add interest" />
+            <button class="btn-small cta" @click="addCustomInterest">
               Add
             </button>
           </div>
-
-          <p class="selected-count">Selected: {{ selectedInterests.length }}</p>
         </div>
 
-        <button class="save-btn" @click="handleSave" type="button">
+        <button class="cta reset-button save-button" @click="handleSave">
           Save Profile
         </button>
+
       </div>
     </div>
   </main>

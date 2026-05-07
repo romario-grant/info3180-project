@@ -23,7 +23,7 @@ const handleMarkRead = async (notificationId) => {
   try {
     await markNotificationRead(notificationId);
     notifications.value = notifications.value.map((item) =>
-      item.id === notificationId ? { ...item, is_read: true } : item
+      item.id === notificationId ? { ...item, is_read: true } : item,
     );
   } catch (error) {
     errorMessage.value = error.message;
@@ -44,11 +44,20 @@ onMounted(() => {
   <main class="dashboard">
     <aside class="sidebar">
       <nav>
-        <RouterLink to="/dashboard">Browse</RouterLink>
-        <RouterLink to="/me/profile">My Profile</RouterLink>
-        <RouterLink to="/matches">Matches</RouterLink>
-        <RouterLink to="/favorites">Favorites</RouterLink>
-        <RouterLink to="/notifications">Notifications</RouterLink>
+        <RouterLink to="/me/profile" class="pfp">
+          <img
+            class="profile-image"
+            src="../assets/pics/default.webp"
+            alt="profile picture"
+          />
+        </RouterLink>
+        <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+        <RouterLink to="/matches"><p>Matches</p></RouterLink>
+        <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
+        <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
+        <RouterLink to="/" class="btm"
+          ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
+        >
       </nav>
     </aside>
 
@@ -74,7 +83,7 @@ onMounted(() => {
           <div class="notification-actions">
             <button
               v-if="!notification.is_read"
-              class="mark-btn"
+              class="cta"
               @click="handleMarkRead(notification.id)"
             >
               Mark as Read

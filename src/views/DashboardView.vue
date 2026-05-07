@@ -5,7 +5,7 @@ import {
   likeUser,
   passUser,
   getSingleProfile,
-  addFavorite
+  addFavorite,
 } from "../services/api";
 
 const profiles = ref([]);
@@ -32,7 +32,8 @@ const formatName = (name) => {
 };
 
 const imageUrl = (path) => {
-  if (!path) return new URL("../assets/pics/default.webp", import.meta.url).href;
+  if (!path)
+    return new URL("../assets/pics/default.webp", import.meta.url).href;
   return `http://localhost:5000${path}`;
 };
 
@@ -63,7 +64,9 @@ const resetFilters = async () => {
 const handleLike = async (userId) => {
   try {
     const result = await likeUser(userId);
-    profiles.value = profiles.value.filter((profile) => profile.user_id !== userId);
+    profiles.value = profiles.value.filter(
+      (profile) => profile.user_id !== userId,
+    );
 
     if (result.match_created) {
       alert("It's a match!");
@@ -76,7 +79,9 @@ const handleLike = async (userId) => {
 const handlePass = async (userId) => {
   try {
     await passUser(userId);
-    profiles.value = profiles.value.filter((profile) => profile.user_id !== userId);
+    profiles.value = profiles.value.filter(
+      (profile) => profile.user_id !== userId,
+    );
   } catch (error) {
     errorMessage.value = error.message;
   }
@@ -114,21 +119,28 @@ onMounted(() => {
 </script>
 
 <template>
+  <aside class="sidebar">
+    <nav>
+      <RouterLink to="/me/profile" class="pfp">
+        <img
+          class="profile-image"
+          src="../assets/pics/default.webp"
+          alt="profile picture"
+        />
+      </RouterLink>
+      <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+      <RouterLink to="/matches"><p>Matches</p></RouterLink>
+      <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
+      <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
+      <RouterLink to="/" class="btm"
+        ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
+      >
+    </nav>
+  </aside>
   <main class="dashboard">
-    <aside class="sidebar">
-      <nav>
-        <RouterLink to="/dashboard">Browse</RouterLink>
-        <RouterLink to="/me/profile">My Profile</RouterLink>
-        <RouterLink to="/matches">Matches</RouterLink>
-        <RouterLink to="/favorites">Favorites</RouterLink>
-        <RouterLink to="/notifications">Notifications</RouterLink>
-      </nav>
-    </aside>
-
     <div class="dash">
       <div class="container">
         <h2>Browse Potential Matches</h2>
-
         <div class="filters">
           <input
             v-model="filters.search"
@@ -143,11 +155,13 @@ onMounted(() => {
           <input
             v-model="filters.min_age"
             type="number"
+            min="18"
             placeholder="Min age"
           />
           <input
             v-model="filters.max_age"
             type="number"
+            min="18"
             placeholder="Max age"
           />
           <input
@@ -156,134 +170,100 @@ onMounted(() => {
             placeholder="Interest..."
           />
         </div>
-
         <div class="fil">
           <button class="cta" @click="loadProfiles" type="button">
             Apply Filters
           </button>
-          <button class="cta" data-cta-style="line" @click="resetFilters" type="button">
+          <button
+            class="cta"
+            data-cta-style="line"
+            @click="resetFilters"
+            type="button"
+          >
             Reset Filters
           </button>
         </div>
-
-        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
-        <p v-if="loading" class="loading-text">Loading profiles...</p>
       </div>
-
       <section class="section-team">
-        <div class="wrapper">
-          <div class="team">
-            <div class="profile-card" v-for="profile in profiles" :key="profile.id">
-              <figure class="img-box clickable" @click="openProfileModal(profile.user_id)">
-                <img :src="imageUrl(profile.profile_picture)" alt="profile picture" />
-              </figure>
-
-              <div class="info">
-                <div class="left clickable" @click="openProfileModal(profile.user_id)">
-                  <h3>
-                    {{ formatName(profile.display_name) }}
-                    <span v-if="profile.age">, {{ profile.age }}</span>
-                  </h3>
-
-                  <p v-if="profile.bio">{{ profile.bio }}</p>
-                  <p v-if="profile.location">{{ profile.location }}</p>
-
-                  <p
-                    v-if="profile.interests && profile.interests.length"
-                    class="interests-text"
-                  >
-                    Interests: {{ profile.interests.join(", ") }}
-                  </p>
-
-                  <p
-                    v-if="profile.shared_interest_count > 0"
-                    class="shared-interest"
-                  >
-                    Shared interests: {{ profile.shared_interest_count }}
-                  </p>
-
-                  <p v-if="profile.looking_for" class="txt-p-clr">
-                    Looking for: {{ profile.looking_for }}
-                  </p>
-
-                  <p class="match-score">
-                    Match Score: {{ profile.match_score }}%
-                  </p>
-                </div>
-
-                <div class="rate-btns">
+        <div class="team">
+          <article
+            class="profile-card"
+            v-for="profile in profiles"
+            :key="profile.id"
+          >
+            <figure
+              class="profile-card__media clickable"
+              @click="openProfileModal(profile.user_id)"
+            >
+              <img
+                :src="imageUrl(profile.profile_picture)"
+                alt="profile picture"
+                class="profile-card__img"
+              />
+            </figure>
+            <div class="profile-card__body">
+              <div
+                class="profile-card__info clickable"
+                @click="openProfileModal(profile.user_id)"
+              >
+                <h3 class="profile-card__name">
+                  {{ formatName(profile.display_name) }}
+                  <span v-if="profile.age">, {{ profile.age }}</span>
+                </h3>
+                <p v-if="profile.location" class="text-muted">
+                  {{ profile.location }}
+                </p>
+                <p v-if="profile.bio" class="text-muted">{{ profile.bio }}</p>
+              </div>
+              <!-- SIGNALS -->
+              <div class="profile-card__signals">
+                <p class="match-score">🔥 {{ profile.match_score }}% Match</p>
+                <p
+                  v-if="profile.shared_interest_count > 0"
+                  class="text-highlight"
+                >
+                  💙 {{ profile.shared_interest_count }} shared interests
+                </p>
+                <p v-if="profile.interests?.length" class="text-muted small">
+                  {{ profile.interests.join(", ") }}
+                </p>
+                <p v-if="profile.looking_for" class="text-muted small">
+                  Looking for: {{ profile.looking_for }}
+                </p>
+              </div>
+              <!-- ACTIONS -->
+              <div class="profile-card__actions">
+                <div class="tp">
                   <button
-                    class="reset-btn favorite cta"
-                    type="button"
+                    class="reset-button cta btn--favorite"
                     @click="handleFavorite(profile.user_id)"
                   >
                     Favorite
                   </button>
                   <button
-                    class="reset-btn like cta"
-                    type="button"
+                    class="reset-button cta btn--like"
                     @click="handleLike(profile.user_id)"
                   >
                     Like
                   </button>
-                  <button
-                    class="reset-btn pass"
-                    type="button"
-                    @click="handlePass(profile.user_id)"
-                  >
-                    Pass
-                  </button>
                 </div>
+                <button
+                  class="reset-button cta btn--pass"
+                  @click="handlePass(profile.user_id)"
+                >
+                  Pass
+                </button>
               </div>
             </div>
-
-            <p v-if="!loading && profiles.length === 0" class="empty-text">
-              No profiles found.
-            </p>
-          </div>
+          </article>
+          <p v-if="!loading && profiles.length === 0" class="empty-text">
+            No profiles found.
+          </p>
         </div>
       </section>
-    </div>
-
-    <div
-      v-if="selectedProfile || modalLoading"
-      class="modal-overlay"
-      @click.self="closeProfileModal"
-    >
-      <div class="modal-card">
-        <button class="close-btn" @click="closeProfileModal">×</button>
-
-        <p v-if="modalLoading">Loading profile...</p>
-
-        <template v-if="selectedProfile">
-          <img
-            class="modal-image"
-            :src="imageUrl(selectedProfile.profile_picture)"
-            alt="profile picture"
-          />
-          <h2>
-            {{ formatName(selectedProfile.display_name) }}
-            <span v-if="selectedProfile.age">, {{ selectedProfile.age }}</span>
-          </h2>
-
-          <p v-if="selectedProfile.bio">{{ selectedProfile.bio }}</p>
-          <p v-if="selectedProfile.location">Location: {{ selectedProfile.location }}</p>
-          <p v-if="selectedProfile.gender">Gender: {{ selectedProfile.gender }}</p>
-          <p v-if="selectedProfile.looking_for">Looking for: {{ selectedProfile.looking_for }}</p>
-
-          <p
-            v-if="selectedProfile.interests && selectedProfile.interests.length"
-            class="interests-text"
-          >
-            Interests: {{ selectedProfile.interests.join(", ") }}
-          </p>
-
-          <p class="match-score">Match Score: {{ selectedProfile.match_score }}%</p>
-        </template>
-      </div>
-    </div>
+        </div>
   </main>
 </template>
 
-
 <style scoped src="../assets/css/dashboard.css"></style>
+/style>

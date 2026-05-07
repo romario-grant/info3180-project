@@ -119,6 +119,8 @@
     line-height: 1.6;
   }
 
+
+
   body {
     background-color: var(--dark-secondary-color);
     font-size: var(--fs-1);
@@ -237,24 +239,26 @@
   }
 
   .reset-btn {
+    appearance: none;
+    background: none;
     border: none;
-    text-align: inherit;
-    outline: none;
-    color: white;
-    padding: var(--button-padding);
-    border-radius: var(--border-radius);
+    padding: 0;
+    font: inherit;
+    color: inherit;
     cursor: pointer;
-    box-shadow:
-      inset 0px 3px 3px rgba(255, 255, 255, 0.5),
-      0 3px 4px rgba(0, 0, 0, 0.2),
-      0px -8px 12px rgba(14, 18, 255, 0.15);
-    transform: translateY(0px);
-    text-decoration: none;
-    font-weight: 500;
-    display: flex;
-    justify-content: center;
-    width: max-content;
-    align-items: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .input-reset {
+    appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+    font: inherit;
+    color: inherit;
   }
 
   .cta {

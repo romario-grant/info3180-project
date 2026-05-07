@@ -38,8 +38,20 @@ onMounted(() => {
   <main class="dashboard">
     <aside class="sidebar">
       <nav>
-        <RouterLink to="/dashboard">Browse</RouterLink>
-        <RouterLink to="/matches">Matches</RouterLink>
+        <RouterLink to="/me/profile" class="pfp">
+          <img
+            class="profile-image"
+            src="../assets/pics/default.webp"
+            alt="profile picture"
+          />
+        </RouterLink>
+        <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+        <RouterLink to="/matches"><p>Matches</p></RouterLink>
+        <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
+        <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
+        <RouterLink to="/" class="btm"
+          ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
+        >
       </nav>
     </aside>
 
@@ -51,39 +63,39 @@ onMounted(() => {
       </p>
       <p v-if="loading" class="loading-text">Loading matches...</p>
 
-      <section class="section-team">
-        <div class="wrapper">
-          <div class="team">
+      <section class="matches-section">
+        <div class="matches-wrapper">
+          <div class="matches-grid">
             <div
-              class="profile-card"
+              class="match-card"
               v-for="match in matches"
               :key="match.match_id"
             >
-              <figure class="img-box">
+              <figure class="match-image-box">
                 <img src="../assets/pics/default.webp" alt="profile picture" />
               </figure>
 
-              <div class="info">
-                <div class="left">
+              <div class="match-content">
+                <div class="match-details">
                   <h3>
                     {{ formatName(match.display_name) }}
                     <span v-if="match.age">, {{ match.age }}</span>
                   </h3>
 
                   <p v-if="match.bio">{{ match.bio }}</p>
-                  <p v-if="match.location">{{ match.location }}</p>
+
+                  <p v-if="match.location">
+                    {{ match.location }}
+                  </p>
                 </div>
 
-                <RouterLink
-                  :to="`/message/${match.user_id}`"
-                  class="reset-btn mess"
-                >
+                <RouterLink :to="`/message/${match.user_id}`" class="cta">
                   Message
                 </RouterLink>
               </div>
             </div>
 
-            <p v-if="!loading && matches.length === 0" class="empty-text">
+            <p v-if="!loading && matches.length === 0" class="matches-empty">
               No matches yet.
             </p>
           </div>

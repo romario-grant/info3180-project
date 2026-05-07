@@ -1,6 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getFavorites, removeFavorite, getSingleProfile } from "../services/api";
+import {
+  getFavorites,
+  removeFavorite,
+  getSingleProfile,
+} from "../services/api";
 
 const favorites = ref([]);
 const loading = ref(false);
@@ -18,7 +22,8 @@ const formatName = (name) => {
 };
 
 const imageUrl = (path) => {
-  if (!path) return new URL("../assets/pics/default.webp", import.meta.url).href;
+  if (!path)
+    return new URL("../assets/pics/default.webp", import.meta.url).href;
   return `http://localhost:5000${path}`;
 };
 
@@ -70,93 +75,90 @@ onMounted(() => {
   <main class="dashboard">
     <aside class="sidebar">
       <nav>
-        <RouterLink to="/dashboard">Browse</RouterLink>
-        <RouterLink to="/me/profile">My Profile</RouterLink>
-        <RouterLink to="/matches">Matches</RouterLink>
-        <RouterLink to="/favorites">Favorites</RouterLink>
+        <RouterLink to="/me/profile" class="pfp">
+          <img
+            class="profile-image"
+            src="../assets/pics/default.webp"
+            alt="profile picture"
+          />
+        </RouterLink>
+        <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
+        <RouterLink to="/matches"><p>Matches</p></RouterLink>
+        <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
+        <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
+        <RouterLink to="/" class="btm"
+          ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
+        >
       </nav>
     </aside>
 
-    <div class="dash">
-      <h2>My Favorites</h2>
+<div class="dash">
+  <h2>My Favorites</h2>
 
-      <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
-      <p v-if="loading" class="loading-text">Loading favorites...</p>
+  <p v-if="errorMessage" class="alert-error">{{ errorMessage }}</p>
+  <p v-if="loading" class="loading-state">Loading favorites...</p>
 
-      <section class="section-team">
-        <div class="wrapper">
-          <div class="team">
-            <div class="profile-card" v-for="favorite in favorites" :key="favorite.id">
-              <figure class="img-box clickable" @click="openProfileModal(favorite.user_id)">
-                <img :src="imageUrl(favorite.profile_picture)" alt="profile picture" />
-              </figure>
+  <section class="favorites-section">
+    <div class="favorites-wrapper">
+      <div class="favorites-grid">
+        <div
+          class="favorite-card"
+          v-for="favorite in favorites"
+          :key="favorite.id"
+        >
+          <figure
+            class="favorite-image-box clickable"
+            @click="openProfileModal(favorite.user_id)"
+          >
+            <img
+              :src="imageUrl(favorite.profile_picture)"
+              alt="profile picture"
+            />
+          </figure>
 
-              <div class="info">
-                <div class="left clickable" @click="openProfileModal(favorite.user_id)">
-                  <h3>
-                    {{ formatName(favorite.display_name) }}
-                    <span v-if="favorite.age">, {{ favorite.age }}</span>
-                  </h3>
-                  <p v-if="favorite.bio">{{ favorite.bio }}</p>
-                  <p v-if="favorite.location">{{ favorite.location }}</p>
-                </div>
+          <div class="favorite-content">
+            <div
+              class="favorite-details clickable"
+              @click="openProfileModal(favorite.user_id)"
+            >
+              <h3>
+                {{ formatName(favorite.display_name) }}
+                <span v-if="favorite.age">, {{ favorite.age }}</span>
+              </h3>
 
-                <div class="action-row">
-                  <RouterLink :to="`/message/${favorite.user_id}`" class="reset-btn message-btn">
-                    Message
-                  </RouterLink>
-                  <button class="reset-btn remove-btn" @click="handleRemove(favorite.user_id)">
-                    Remove
-                  </button>
-                </div>
-              </div>
+              <p v-if="favorite.bio">{{ favorite.bio }}</p>
+
+              <p v-if="favorite.location">
+                {{ favorite.location }}
+              </p>
             </div>
 
-            <p v-if="!loading && favorites.length === 0" class="empty-text">
-              No favorites yet.
-            </p>
+            <div class="favorite-actions">
+              <RouterLink
+                :to="`/message/${favorite.user_id}`"
+                class="action-btn chat-btn"
+              >
+                Message
+              </RouterLink>
+
+              <button
+                class="action-btn danger-btn"
+                @click="handleRemove(favorite.user_id)"
+              >
+                Remove
+              </button>
+            </div>
           </div>
         </div>
-      </section>
-    </div>
 
-    <div
-      v-if="selectedProfile || modalLoading"
-      class="modal-overlay"
-      @click.self="closeProfileModal"
-    >
-      <div class="modal-card">
-        <button class="close-btn" @click="closeProfileModal">×</button>
-
-        <p v-if="modalLoading">Loading profile...</p>
-
-        <template v-if="selectedProfile">
-          <img
-            class="modal-image"
-            :src="imageUrl(selectedProfile.profile_picture)"
-            alt="profile picture"
-          />
-          <h2>
-            {{ formatName(selectedProfile.display_name) }}
-            <span v-if="selectedProfile.age">, {{ selectedProfile.age }}</span>
-          </h2>
-
-          <p v-if="selectedProfile.bio">{{ selectedProfile.bio }}</p>
-          <p v-if="selectedProfile.location">Location: {{ selectedProfile.location }}</p>
-          <p v-if="selectedProfile.gender">Gender: {{ selectedProfile.gender }}</p>
-          <p v-if="selectedProfile.looking_for">Looking for: {{ selectedProfile.looking_for }}</p>
-
-          <p
-            v-if="selectedProfile.interests && selectedProfile.interests.length"
-            class="interests-text"
-          >
-            Interests: {{ selectedProfile.interests.join(", ") }}
-          </p>
-
-          <p class="match-score">Match Score: {{ selectedProfile.match_score }}%</p>
-        </template>
+        <p v-if="!loading && favorites.length === 0" class="empty-state">
+          No favorites yet.
+        </p>
       </div>
     </div>
+  </section>
+</div>
+ 
   </main>
 </template>
 
