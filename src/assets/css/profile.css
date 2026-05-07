@@ -1,0 +1,135 @@
+@layer default {
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+  }
+
+  .success {
+    background: #064e3b;
+    color: #34d399;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .error {
+    background: #7f1d1d;
+    color: #f87171;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .profile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar-image {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    outline: none;
+    width: 100%;
+  }
+
+  .upload-zone {
+    border: 2px dashed #999;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+    border-radius: 12px;
+  }
+
+  .upload-button {
+    cursor: pointer;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .interests-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .interests-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .interest-pill {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+  }
+
+  .interest-pill.selected {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .interest {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .interest button {
+    width: 100%;
+  }
+
+  .save-button {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background-color: #3b82f6;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+  }
+}
+
+@media (width > 1024px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .interest {
+    flex-direction: row;
+  }
+  .interest button {
+    width: auto;
+  }
+}

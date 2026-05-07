@@ -2,6 +2,7 @@
 import { RouterView, useRoute } from "vue-router";
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
+import SideBar from "@/components/SideBar.vue";
 
 const route = useRoute();
 </script>
@@ -11,6 +12,8 @@ const route = useRoute();
   <Transition name="fade-header">
     <AppHeader v-if="!route.meta.hideBar" />
   </Transition>
+
+  <SideBar v-if="route.meta.sideBar" />
 
   <!-- Pages -->
   <main>
@@ -51,7 +54,7 @@ const route = useRoute();
 
 .dashboard-fade-enter-active,
 .dashboard-fade-leave-active {
-  transition: opacity 0.6s ease;
+  transition: opacity 0.6s easerr;
 }
 
 .dashboard-fade-enter-from,

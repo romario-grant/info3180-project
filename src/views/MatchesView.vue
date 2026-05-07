@@ -36,24 +36,6 @@ onMounted(() => {
 
 <template>
   <main class="dashboard">
-    <aside class="sidebar">
-      <nav>
-        <RouterLink to="/me/profile" class="pfp">
-          <img
-            class="profile-image"
-            src="../assets/pics/default.webp"
-            alt="profile picture"
-          />
-        </RouterLink>
-        <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
-        <RouterLink to="/matches"><p>Matches</p></RouterLink>
-        <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
-        <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
-        <RouterLink to="/" class="btm"
-          ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
-        >
-      </nav>
-    </aside>
 
     <div class="dash">
       <h2>Your Matches</h2>
@@ -106,3 +88,5 @@ onMounted(() => {
 </template>
 
 <style scoped src="../assets/css/dashboard.css"></style>
+<style scoped src="../assets/css/matches.css"></style>
+

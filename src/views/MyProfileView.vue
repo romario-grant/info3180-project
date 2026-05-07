@@ -204,27 +204,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside class="sidebar">
-    <nav>
-      <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
-      <RouterLink to="/matches"><p>Matches</p></RouterLink>
-      <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
-      <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
-      <RouterLink to="/" class="btm"
-        ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
-      >
-    </nav>
-  </aside>
-
   <main class="dashboard pfp">
     <div class="dash">
 
       <div class="top">
-        <img
-          class="avatar-image"
-          :src="imageUrl(profile.profile_picture)"
-          alt="profile"
-        />
         <h2>My Profile</h2>
       </div>
 
@@ -234,7 +217,6 @@ onMounted(() => {
 
       <div v-if="!loading" class="profile-panel">
 
-        <!-- Upload -->
         <div
           class="upload-zone"
           :class="{ active: dragActive }"
@@ -249,24 +231,6 @@ onMounted(() => {
           </label>
         </div>
 
-        <!-- Gallery -->
-        <div class="gallery-grid">
-          <div class="gallery-item" v-for="photo in photos" :key="photo.id">
-            <img :src="imageUrl(photo.image_url)" />
-            <p v-if="photo.is_primary" class="primary-tag">Primary</p>
-
-            <div class="action-buttons">
-              <button class="btn-small" @click="handleSetPrimary(photo.id)">
-                Primary
-              </button>
-              <button class="btn-small delete-btn" @click="handleDeletePhoto(photo.id)">
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- FORM GRID -->
         <div class="form-grid">
           <input v-model="profile.display_name" placeholder="Display name" />
           <input v-model="profile.age" type="number" placeholder="Age" />
@@ -289,7 +253,6 @@ onMounted(() => {
 
         <textarea v-model="profile.bio" placeholder="Bio"></textarea>
 
-        <!-- Interests -->
         <div class="interests-box">
           <h3>Interests</h3>
 
@@ -307,7 +270,7 @@ onMounted(() => {
 
           <div class="interest">
             <input v-model="newInterest" placeholder="Add interest" />
-            <button class="btn-small cta" @click="addCustomInterest">
+            <button class="cta" @click="addCustomInterest">
               Add
             </button>
           </div>
@@ -323,3 +286,5 @@ onMounted(() => {
 </template>
 
 <style scoped src="../assets/css/dashboard.css"></style>
+
+<style scoped src="../assets/css/profile.css"></style>

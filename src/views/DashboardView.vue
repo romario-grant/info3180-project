@@ -119,28 +119,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside class="sidebar">
-    <nav>
-      <RouterLink to="/me/profile" class="pfp">
-        <img
-          class="profile-image"
-          src="../assets/pics/default.webp"
-          alt="profile picture"
-        />
-      </RouterLink>
-      <RouterLink to="/dashboard"> <p>Browse</p> </RouterLink>
-      <RouterLink to="/matches"><p>Matches</p></RouterLink>
-      <RouterLink to="/favorites"><p>Favorites</p></RouterLink>
-      <RouterLink to="/notifications"><p>Notifications</p></RouterLink>
-      <RouterLink to="/" class="btm"
-        ><i class="fa-solid fa-right-from-bracket"></i> Log out</RouterLink
-      >
-    </nav>
-  </aside>
   <main class="dashboard">
     <div class="dash">
       <div class="container">
-        <h2>Browse Potential Matches</h2>
+        <h1>Browse Potential Matches</h1>
         <div class="filters">
           <input
             v-model="filters.search"
@@ -215,7 +197,7 @@ onMounted(() => {
                 </p>
                 <p v-if="profile.bio" class="text-muted">{{ profile.bio }}</p>
               </div>
-              <!-- SIGNALS -->
+
               <div class="profile-card__signals">
                 <p class="match-score">🔥 {{ profile.match_score }}% Match</p>
                 <p
@@ -231,7 +213,7 @@ onMounted(() => {
                   Looking for: {{ profile.looking_for }}
                 </p>
               </div>
-              <!-- ACTIONS -->
+
               <div class="profile-card__actions">
                 <div class="tp">
                   <button
@@ -250,6 +232,7 @@ onMounted(() => {
                 <button
                   class="reset-button cta btn--pass"
                   @click="handlePass(profile.user_id)"
+                  data-cta-style="line"
                 >
                   Pass
                 </button>
@@ -261,9 +244,9 @@ onMounted(() => {
           </p>
         </div>
       </section>
-        </div>
+    </div>
   </main>
 </template>
 
 <style scoped src="../assets/css/dashboard.css"></style>
-/style>
+<style scoped src="../assets/css/browse.css"></style>

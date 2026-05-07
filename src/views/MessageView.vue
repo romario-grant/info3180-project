@@ -214,3 +214,4 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped src="../assets/css/dashboard.css"></style>
+<style scoped src="../assets/css/message.css"></style>

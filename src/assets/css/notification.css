@@ -1,0 +1,126 @@
+@layer default {
+  .notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .notification-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+
+    padding: 22px;
+    border-radius: 24px;
+
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(27, 14, 14, 0.18);
+
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.05),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .notification-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.08),
+      0 6px 14px rgba(0, 0, 0, 0.06);
+  }
+
+  .notification-card.unread {
+    border-left: 6px solid var(--primary-color);
+  }
+
+  .notification-body {
+    flex: 1;
+  }
+
+  .notification-body h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+  }
+
+  .notification-body p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 0.96rem;
+  }
+
+  .notification-body small {
+    color: #9ca3af;
+    font-size: 0.82rem;
+  }
+
+  .notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mark-btn,
+  .message-link {
+    border: none;
+    outline: none;
+    padding: 12px 18px;
+    border-radius: 14px;
+
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .message-link {
+    background: rgba(17, 24, 39, 0.06);
+    color: #111827;
+  }
+
+  .message-link:hover {
+    background: rgba(17, 24, 39, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .empty-text {
+    text-align: center;
+    padding: 30px;
+    border-radius: 22px;
+
+    background: rgba(107, 114, 128, 0.08);
+    color: #6b7280;
+
+    font-weight: 500;
+  }
+}
+
+@media (width > 720px) {
+  .notification-card {
+    flex-direction: row;
+  }
+}
+
+@media (width > 1024px) {
+
+}
