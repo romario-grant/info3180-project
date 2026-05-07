@@ -1,10 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import {
-  getfavorites,
-  removefavorite,
-  getSingleProfile,
-} from "../services/api";
+import { getFavorites, removeFavorite, getSingleProfile } from "../services/api";
 
 const favorites = ref([]);
 const loading = ref(false);
@@ -22,17 +18,16 @@ const formatName = (name) => {
 };
 
 const imageUrl = (path) => {
-  if (!path)
-    return new URL("../assets/pics/default.webp", import.meta.url).href;
+  if (!path) return new URL("../assets/pics/default.webp", import.meta.url).href;
   return `http://localhost:5000${path}`;
 };
 
-const loadfavorites = async () => {
+const loadFavorites = async () => {
   loading.value = true;
   errorMessage.value = "";
 
   try {
-    favorites.value = await getfavorites();
+    favorites.value = await getFavorites();
   } catch (error) {
     errorMessage.value = error.message;
   } finally {
@@ -42,7 +37,7 @@ const loadfavorites = async () => {
 
 const handleRemove = async (userId) => {
   try {
-    await removefavorite(userId);
+    await removeFavorite(userId);
     favorites.value = favorites.value.filter((item) => item.user_id !== userId);
   } catch (error) {
     errorMessage.value = error.message;
@@ -67,9 +62,10 @@ const closeProfileModal = () => {
 };
 
 onMounted(() => {
-  loadfavorites();
+  loadFavorites();
 });
 </script>
+
 
 <template>
   <main class="dashboard">

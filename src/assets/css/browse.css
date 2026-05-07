@@ -187,11 +187,17 @@
 
 @media (width > 1024px) {
   .filters {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .fil {
     flex-direction: row;
+  }
+}
+
+@media (width > 1540px) {
+  .filters {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 

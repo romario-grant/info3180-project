@@ -335,6 +335,12 @@
     transform: unset;
     text-decoration: underline;
   }
+
+  .cta:hover[data-cta-style="outline"] {
+  background-color: var(--primary-color);
+  box-shadow: unset;
+  color: white;
+}
 }
 
 .cta:active {
@@ -362,7 +368,6 @@
 
 .cta:active[data-cta-style="outline"] {
   background-color: var(--primary-color);
-  border: unset;
   box-shadow: unset;
   color: white;
 }

@@ -27,11 +27,6 @@
     position: relative;
   }
 
-  .favorite-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-  }
-
   .favorite-image-box {
     width: 100%;
     height: 320px;
@@ -45,10 +40,6 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
-  }
-
-  .favorite-card:hover .favorite-image-box img {
-    transform: scale(1.05);
   }
 
   .favorite-content {
@@ -111,4 +102,12 @@
 }
 
 @media (width > 1024px) {
+  .favorite-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  }
+
+  .favorite-card:hover .favorite-image-box img {
+    transform: scale(1.05);
+  }
 }
