@@ -12,3 +12,4 @@ class Config:
 
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = False
+    BCRYPT_LOG_ROUNDS = 10
