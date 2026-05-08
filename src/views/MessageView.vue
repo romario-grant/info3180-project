@@ -175,7 +175,7 @@ onBeforeUnmount(() => {
                 placeholder="Type your message..."
               />
               <button class="cta reset-btn" type="submit">Send</button>
-             
+            </form>
           </section>
         </section>
       </div>
