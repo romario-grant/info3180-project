@@ -147,7 +147,7 @@ export default {
       this.error = null;
       this.loading = true;
 
-      const base = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const base = "https://info3180-project-m7e1.onrender.com";
 
       const endpoint = this.isSignup ? "/signup" : "/login";
 
