@@ -105,6 +105,8 @@
 </template>
 
 <script>
+import { login, signup } from "../services/api";
+
 export default {
   props: {
     mode: {
@@ -147,10 +149,6 @@ export default {
       this.error = null;
       this.loading = true;
 
-      const base = "";
-
-      const endpoint = this.isSignup ? "/signup" : "/login";
-
       const body = this.isSignup
         ? {
             email: this.email,
@@ -163,31 +161,15 @@ export default {
           };
 
       try {
-        const res = await fetch(base + endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(body),
-        });
-
-        let data = {};
-        try {
-          data = await res.json();
-        } catch {}
-
-        if (!res.ok) {
-          this.triggerError(data.error || "Authentication failed");
-          return;
-        }
-
-        // redirect logic
         if (this.isSignup) {
+          await signup(body);
           this.$router.push("/login");
         } else {
+          await login(body);
           this.$router.push("/dashboard");
         }
       } catch (err) {
-        this.triggerError("Server error. Try again.");
+        this.triggerError(err.message || "Server error. Try again.");
       } finally {
         this.loading = false;
       }
