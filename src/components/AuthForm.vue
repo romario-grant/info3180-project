@@ -182,7 +182,7 @@ export default {
 
         // redirect logic
         if (this.isSignup) {
-          setTimeout(() => this.$router.push("/login"), 1200);
+          this.$router.push("/login");
         } else {
           this.$router.push("/dashboard");
         }
