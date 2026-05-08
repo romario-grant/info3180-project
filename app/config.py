@@ -5,7 +5,10 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql://", 1) or None
+    db_url = os.environ.get("DATABASE_URL", "")
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = db_url or None
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024
