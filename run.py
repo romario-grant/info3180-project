@@ -1055,5 +1055,23 @@ def logout():
     return jsonify({"message": "Logged out successfully."}), 200
 
 
+
+# --- Serve Vue.js built frontend in production ---
+dist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
+
+
+@app.route("/assets/<path:filename>")
+def serve_assets(filename):
+    return send_from_directory(os.path.join(dist_dir, "assets"), filename)
+
+
+@app.route("/<path:path>")
+def catch_all(path):
+    file_path = os.path.join(dist_dir, path)
+    if os.path.isfile(file_path):
+        return send_from_directory(dist_dir, path)
+    return send_from_directory(dist_dir, "index.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
