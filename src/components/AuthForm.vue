@@ -147,7 +147,7 @@ export default {
       this.error = null;
       this.loading = true;
 
-      const base = "https://info3180-project-m7e1.onrender.com";
+      const base = "";
 
       const endpoint = this.isSignup ? "/signup" : "/login";
 
