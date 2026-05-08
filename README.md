@@ -8,12 +8,13 @@
 
 | Name | Role | Responsibilities |
 |---|---|---|
-| [Member 1] | Project Manager | Timeline oversight, coordination, GitHub management |
-| [Member 2] | Backend Lead | Flask API, database design, authentication, security |
-| [Member 3] | Frontend Lead | Vue 3 components, UI/UX, routing, state management |
+| Romario Grant | Project Manager | Timeline oversight, coordination, GitHub management |
+| Christina Blye | Backend Lead | Flask API, database design, authentication, security |
+| Christina Blye | Backend Lead | Flask API, database design, authentication, security |
+| Joshua Henry | Frontend Lead | Vue 3 components, UI/UX, routing, state management |
 |  Kye Brathwaite | QA/Testing Lead | Test suite, validation, documentation |
 
-> **Note:** Replace the names above with your actual team members before submitting.
+
 
 ---
 
