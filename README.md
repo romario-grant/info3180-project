@@ -9,10 +9,10 @@
 | Name | Role | Responsibilities |
 |---|---|---|
 | Romario Grant | Project Manager | Timeline oversight, coordination, GitHub management |
-| Christina Blye | Backend Lead | Flask API, database design, authentication, security |
+| Shaznay Walker | QA/Testing Lead | Validation, documentation |
 | Christina Blye | Backend Lead | Flask API, database design, authentication, security |
 | Joshua Henry | Frontend Lead | Vue 3 components, UI/UX, routing, state management |
-|  Kye Brathwaite | QA/Testing Lead | Test suite, validation, documentation |
+| Kye Brathwaite | QA/Testing Lead | Test suite |
 
 
 
