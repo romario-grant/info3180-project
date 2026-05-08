@@ -12,15 +12,16 @@ async function apiRequest(endpoint, options = {}) {
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
+  const text = await response.text();
   let data = {};
   try {
-    data = await response.json();
-  } catch {
+    data = text ? JSON.parse(text) : {};
+  } catch (err) {
     data = {};
   }
 
   if (!response.ok) {
-    throw new Error(data.error || "Request failed.");
+    throw new Error(data.error || `Server Error: ${response.status}`);
   }
 
   return data;
@@ -142,7 +143,13 @@ export async function uploadProfilePhoto(file) {
     body: formData,
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (err) {
+    data = {};
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "Photo upload failed.");
@@ -170,7 +177,13 @@ export async function uploadPhotos(files) {
     body: formData,
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (err) {
+    data = {};
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "Photo upload failed.");
