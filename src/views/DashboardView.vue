@@ -34,7 +34,7 @@ const formatName = (name) => {
 const imageUrl = (path) => {
   if (!path)
     return new URL("../assets/pics/default.webp", import.meta.url).href;
-  return `http://localhost:5000${path}`;
+  return path;
 };
 
 const loadProfiles = async () => {

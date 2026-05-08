@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://info3180-project-m7e1.onrender.com";
+const API_BASE_URL = "";
 
 async function apiRequest(endpoint, options = {}) {
   const config = {
